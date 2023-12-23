@@ -20,19 +20,21 @@ class Piece {
 // 2 = White fort
 let board = [
         [0,0,0,0,0],
-       [0,0,1,0,0,0],
-      [0,0,-1,2,0,0,0],
+       [0,0,0,0,0,0],
+      [0,0,0,0,0,0,0],
      [0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
      [0,0,0,0,0,0,0,0],
-      [0,0,0,-2,0,0,0],
-       [0,0,0,-1,0,0],
+      [0,0,0,0,0,0,0],
+       [0,0,0,0,0,0],
         [0,0,0,0,0],
 ];
 
 const movesPerTurn = 3;
 const midPoint = (board.length - 1)/2;
 
+let isFirstTurn = true;
+let gameOver = false;
 // 1 or -1
 let currentPlayer = 1;
 // 1, 2, 3, or 4
@@ -42,11 +44,16 @@ let newPiecesPositions = [];
 
 let readyToMove = null;
 
-// TODO: First turn
-// TODO: Display who's turn it is
-// TODO: Check game over because can't spawn - all forts blocked and either phase 4 or no pieces.
+/* TODO's:
+ * - Game log
+ * - Ten move rule (counter and check game over)
+ * - Row and column markers
+ */
 
 function movePiece(e) {
+    if (gameOver) {
+        return;
+    }
     let piece = e.target;
     const row = parseInt(piece.getAttribute("row"));
     const col = parseInt(piece.getAttribute("col"));
@@ -60,6 +67,15 @@ function movePiece(e) {
     const currentPiece = currentPlayer;
     const currentFort = currentPlayer * 2;
 
+    if (isFirstTurn && currentPhase <= movesPerTurn) {
+        if (kind == 0) {
+            board[row][col] = currentFort;
+            buildBoard();
+            findPossiblePositions(p, true);
+            currentPhase = movesPerTurn + 1;
+            displayCurrentPlayer();
+        }
+    }   
     if (currentPhase <= movesPerTurn && kind == currentPiece) {
         findPossiblePositions(p, false);
     } else if (kind == currentFort) {
@@ -98,13 +114,88 @@ function enableToMove(p) {
             board[p.row][p.col] = currentPiece;
             currentPhase = 1;
             currentPlayer = -currentPlayer;
+            if (currentPlayer === 1) {
+                isFirstTurn = false;
+            }
         } else {
             console.log("readyToMove doesn't point at current player");
         }
     }
     readyToMove = null;
     newPiecesPositions = [];
+    skipToSpawn();
+    checkGameOver();
+    displayCurrentPlayer();
     buildBoard();
+}
+
+function skipToSpawn() {
+    if (isFirstTurn || currentPhase === movesPerTurn + 1) {
+        return;
+    }
+    // If current player has no pieces, skip to the spawn phase.
+    for (let row_index = 0; row_index < board.length; row_index++) {
+        const row = board[row_index];
+        for (let col_index = 0; col_index < row.length; col_index++) {
+            const cell = row[col_index];
+            const currentPiece = currentPlayer;
+            if (cell === currentPiece) {
+                return;
+            }
+        }
+    }
+    currentPhase = movesPerTurn + 1;
+}
+
+function checkGameOver() {
+    if (isFirstTurn || currentPhase <= movesPerTurn) {
+        return;
+    }
+    // If, for every fort of the current player, it has no empty squares, the game is over.
+    for (let row_index = 0; row_index < board.length; row_index++) {
+        const row = board[row_index];
+        for (let col_index = 0; col_index < row.length; col_index++) {
+            const cell = row[col_index];
+            const currentFort = currentPlayer * 2;
+            if (cell == currentFort) {
+                const neighbors = allNeighbors(new Piece(row_index, col_index));
+                for (let i = 0; i < neighbors.length; i++) {
+                    const neighbor = neighbors[i];
+                    const neighbor_cell = board[neighbor.row][neighbor.col];
+                    if (neighbor_cell == 0) {
+                        return;
+                    }
+                }
+            }
+        }
+    }
+    currentPlayer = -currentPlayer;
+    gameOver = true;
+}
+
+
+function displayCurrentPlayer() {
+    let playerMarker = document.getElementById("next-player-marker");
+    if (!playerMarker) {
+        console.log("Player marker is null! Oh no!");
+    }
+    if (currentPlayer == 1) {
+        playerMarker.setAttribute("class", "occupied white");
+    } else {
+        playerMarker.setAttribute("class", "occupied black");
+    }
+    let playerDiv = document.getElementById("next-player-text");
+    if (gameOver) {
+        playerDiv.innerText = "wins! Game over!"
+    } else if (currentPhase <= movesPerTurn) {
+        if (!isFirstTurn) {
+            playerDiv.innerText = "player, move " + currentPhase + "/" + movesPerTurn;
+        } else {
+            playerDiv.innerText = "player, place fort";
+        }
+    } else {
+        playerDiv.innerText = "player, spawn";
+    }
 }
 
 function findPossiblePositions(p, spawn) {
