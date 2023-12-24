@@ -32,7 +32,7 @@ combining both dots into a fort.
 
 Note that forts cannot be captured.
 
-* Spawn: Place a new dot next to one of your forts.
+* Spawn: Place a new dot on an empty square next to one of your forts.
 
 The spawn is mandatory: If you prevent your opponent from spawning, you win the game.
 
