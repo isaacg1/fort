@@ -1,6 +1,6 @@
 ## New board game: Fort
 
-Fort is a new territory-control game that I've invented, in the style of Go or Paper tactics.
+Fort is a new territory-control game that I've invented, in the style of Go or Paper Tactics.
 
 ### How to play the game
 
