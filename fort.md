@@ -22,7 +22,7 @@ There are two kinds of units: *dots* and *forts*. Dots can move, forts cannot.
 
 A *turn* consists of up to three *moves*, followed by one *spawn*.
 
-A move can be either a *step*, a *capture*, or a *claim*.
+Each of the three moves can be either a *step*, a *capture*, or a *claim*.
 Each consists of moving a dot to an adjacent square.
 
 * Step: Move a dot to an empty adjacent square.
