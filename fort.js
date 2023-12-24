@@ -23,7 +23,7 @@ let board = [
        [0,0,0,0,0,0],
       [0,0,0,0,0,0,0],
      [0,0,0,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0],
+    [2,0,0,0,0,0,0,-2,0],
      [0,0,0,0,0,0,0,0],
       [0,0,0,0,0,0,0],
        [0,0,0,0,0,0],
@@ -33,7 +33,6 @@ let board = [
 const movesPerTurn = 3;
 const midPoint = (board.length - 1)/2;
 
-let isFirstTurn = true;
 let gameOver = false;
 // 1 or -1
 let currentPlayer = 1;
@@ -45,9 +44,13 @@ let newPiecesPositions = [];
 let readyToMove = null;
 
 /* TODO's:
- * - Game log
+ * Undo last move - maintain an oldBoard which is just the most recent board before the current one.
+ * Have a button below the board to restore it.
+ *
+ * Long term:
  * - Ten move rule (counter and check game over)
  * - Row and column markers
+ * - Game log
  */
 
 function movePiece(e) {
@@ -67,15 +70,6 @@ function movePiece(e) {
     const currentPiece = currentPlayer;
     const currentFort = currentPlayer * 2;
 
-    if (isFirstTurn && currentPhase <= movesPerTurn) {
-        if (kind == 0) {
-            board[row][col] = currentFort;
-            buildBoard();
-            findPossiblePositions(p, true);
-            currentPhase = movesPerTurn + 1;
-            displayCurrentPlayer();
-        }
-    }   
     if (currentPhase <= movesPerTurn && kind == currentPiece) {
         findPossiblePositions(p, false);
     } else if (kind == currentFort) {
@@ -100,23 +94,22 @@ function enableToMove(p) {
         const kindToMove = board[readyToMove.row][readyToMove.col];
         const currentPiece = currentPlayer;
         const currentFort = currentPlayer * 2;
+        const targetKind = board[p.row][p.col];
         if (kindToMove === currentPiece) {
-            if (p.equals(readyToMove)) {
+            if (targetKind === currentPiece) {
                 // Claim
                 board[p.row][p.col] = currentFort;
             } else {
                 // Step or capture
                 board[p.row][p.col] = currentPiece;
-                board[readyToMove.row][readyToMove.col] = 0;
             }
+            // Empty current square
+            board[readyToMove.row][readyToMove.col] = 0;
             currentPhase++;
         } else if (kindToMove == currentFort) {
             board[p.row][p.col] = currentPiece;
             currentPhase = 1;
             currentPlayer = -currentPlayer;
-            if (currentPlayer === 1) {
-                isFirstTurn = false;
-            }
         } else {
             console.log("readyToMove doesn't point at current player");
         }
@@ -130,17 +123,24 @@ function enableToMove(p) {
 }
 
 function skipToSpawn() {
-    if (isFirstTurn || currentPhase === movesPerTurn + 1) {
+    if (currentPhase === movesPerTurn + 1) {
         return;
     }
-    // If current player has no pieces, skip to the spawn phase.
+    // If current player has no pieces that have legal moves, skip to the spawn phase.
     for (let row_index = 0; row_index < board.length; row_index++) {
         const row = board[row_index];
         for (let col_index = 0; col_index < row.length; col_index++) {
             const cell = row[col_index];
             const currentPiece = currentPlayer;
             if (cell === currentPiece) {
-                return;
+                const neighbors = allNeighbors(new Piece(row_index, col_index));
+                for (let i = 0; i < neighbors.length; i++) {
+                    const neighbor = neighbors[i];
+                    const neighbor_cell = board[neighbor.row][neighbor.col];
+                    if (neighbor_cell == 0 || neighbor_cell == 1 || neighbor_cell == -1) {
+                        return;
+                    }
+                }
             }
         }
     }
@@ -148,7 +148,7 @@ function skipToSpawn() {
 }
 
 function checkGameOver() {
-    if (isFirstTurn || currentPhase <= movesPerTurn) {
+    if (currentPhase <= movesPerTurn) {
         return;
     }
     // If, for every fort of the current player, it has no empty squares, the game is over.
@@ -188,11 +188,7 @@ function displayCurrentPlayer() {
     if (gameOver) {
         playerDiv.innerText = "wins! Game over!"
     } else if (currentPhase <= movesPerTurn) {
-        if (!isFirstTurn) {
-            playerDiv.innerText = "player, move " + currentPhase + "/" + movesPerTurn;
-        } else {
-            playerDiv.innerText = "player, place fort";
-        }
+        playerDiv.innerText = "player, move " + currentPhase + "/" + movesPerTurn;
     } else {
         playerDiv.innerText = "player, spawn";
     }
@@ -203,13 +199,7 @@ function findPossiblePositions(p, spawn) {
     for (let i = 0; i < neighbors.length; i++) {
         const neighbor = neighbors[i];
         const cell = board[neighbor.row][neighbor.col];
-        const currentOpponentPiece = -currentPlayer;
-        const currentPiece = currentPlayer;
-        if (cell === 0
-            // Capture
-            || (!spawn && cell === currentOpponentPiece)
-            // Claim
-            || (!spawn && cell === currentPiece && p.equals(neighbor))) {
+        if (cell === 0 || (!spawn && (cell === 1 || cell === -1))) {
             readyToMove = p;
             markPossiblePosition(neighbor);
         }
@@ -234,8 +224,6 @@ function allNeighbors(p) {
     if (p.col > 0) {
         array.push(new Piece(p.row, p.col - 1));
     }
-    // Self
-    array.push(new Piece(p.row, p.col));
     // Move right
     if (p.col < board[p.row].length - 1) {
         array.push(new Piece(p.row, p.col + 1));
