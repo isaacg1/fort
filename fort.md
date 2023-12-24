@@ -18,7 +18,7 @@ The fort board is a 61 square hex board, consisting of 5 hexagonal cycles from t
 
 There are two players who alternate turns.
 
-There are two kinds of units: *dots* and *forts*. Pieces can move, forts cannot.
+There are two kinds of units: *dots* and *forts*. Dots can move, forts cannot.
 
 A *turn* consists of up to three *moves*, followed by one *spawn*.
 
@@ -32,7 +32,7 @@ combining both dots into a fort.
 
 Note that forts cannot be captured.
 
-* Spawn: Place a new piece next to one of your forts.
+* Spawn: Place a new dot next to one of your forts.
 
 The spawn is mandatory: If you prevent your opponent from spawning, you win the game.
 
