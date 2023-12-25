@@ -4,7 +4,7 @@ Fort is a new territory-control game that I've invented, in the style of Go or P
 
 ### How to play the game
 
-The fort board is a 61 square hex board, consisting of 5 hexagonal cycles from the center.
+The fort board is a 61 square hex board:
 
         * * * * *
        * * * * * *
@@ -47,9 +47,16 @@ The primary way for the game to end is because a player is prevented from spawni
 because all of their forts are surrounded.
 If that happens, the player who cannot spawn loses, and the player who prevented them wins.
 
-The game can also end via the ten turn rule:
-If each player takes ten turns, and neither player has claimed in that time, the game ends.
-The player with more forts wins.
-If both players have the same number of forts,
-the player with more dots wins.
-If all units are equal, the player who is about to move wins.
+Commonly, the board will get divided into two regions, one controlled by each player.
+At the point, the game can usually be adjucated by counting which player controls more territory,
+but the game can also be played out to the end to make sure.
+
+### Repetition rule
+
+Occassionally, players might get into a cycle where each is playing a move
+that undoes the opponent's move.
+Fort uses the
+[Arimaa repetition rule](https://en.wikibooks.org/wiki/Arimaa/Glossary#Repetition_rule):
+A player who has already completed their turn in a given position twice
+may never end their turn in that exact position again.
+This prevents these cycles from continuing.

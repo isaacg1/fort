@@ -1,6 +1,7 @@
 // See fort.md for rules
 // Checkers guide as a starting point:
 // https://dev.to/niemet0502/how-i-built-a-checkers-game-with-javascript-2hn5
+// https://github.com/niemet0502/checkers-game-js
 
 class Piece {
     constructor(row, col) {
@@ -43,12 +44,13 @@ let newPiecesPositions = [];
 
 let readyToMove = null;
 
+let oldPlayer = currentPlayer;
+let oldPhase = currentPhase;
+let oldBoard = board;
+
 /* TODO's:
- * Undo last move - maintain an oldBoard which is just the most recent board before the current one.
- * Have a button below the board to restore it.
- *
  * Long term:
- * - Ten move rule (counter and check game over)
+ * - Count repetition
  * - Row and column markers
  * - Game log
  */
@@ -91,6 +93,12 @@ function enableToMove(p) {
         }
     }
     if (eligibleCell) {
+        // Save old game state
+        oldPlayer = currentPlayer;
+        oldPhase = currentPhase;
+        // Clone, two levels deep.
+        oldBoard = board.map(row => {return [...row]});
+
         const kindToMove = board[readyToMove.row][readyToMove.col];
         const currentPiece = currentPlayer;
         const currentFort = currentPlayer * 2;
@@ -256,6 +264,19 @@ function markPossiblePosition(p) {
     }
 }
 
+function undo() {
+    currentPlayer = oldPlayer;
+    currentPhase = oldPhase;
+    console.log(board);
+    board = oldBoard;
+    console.log(board);
+    gameOver = false;
+    readyToMove = null;
+    newPiecesPositions = [];
+    displayCurrentPlayer();
+    buildBoard();
+}
+
 let game = document.getElementById("game");
 function buildBoard() {
     game.innerHTML = "";
@@ -325,6 +346,8 @@ function buildBoard() {
         }
         game.appendChild(document_row);
     }
+    skipToSpawn();
+    displayCurrentPlayer();
 }
 
 buildBoard();

@@ -19,11 +19,7 @@ body {
 
 .counter {
   display: flex;
-  width: 250px;
-  align-items: center;
-  justify-content: center;
   gap: 20px;
-  background-color: #808080;
   border-radius: 5px;
 }
 .counter div {
@@ -37,6 +33,24 @@ body {
   align-items: center;
   gap: 5px;
   font-size: 20px;
+}
+
+.display-row {
+  display: flex;
+  width: 250px;
+  align-items: center;
+  font-size: 20px;
+  background-color: #808080;
+  border-radius: 5px;
+  padding: 2.5px
+}
+.button {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    background-color: #808080;
+    border-radius: 5px;
+    margin-left: 10px
 }
 .occupied {
   width: 30px;
