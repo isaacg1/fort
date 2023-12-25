@@ -1,6 +1,6 @@
 ## New board game: Fort
 
-Fort is a new territory-control game that I've invented, in the style of Go or Paper tactics.
+Fort is a new territory-control game that I've invented, in the style of Go or Paper Tactics.
 
 ### How to play the game
 
@@ -18,11 +18,11 @@ The fort board is a 61 square hex board:
 
 There are two players who alternate turns.
 
-There are two kinds of units: *dots* and *forts*. Pieces can move, forts cannot.
+There are two kinds of units: *dots* and *forts*. Dots can move, forts cannot.
 
 A *turn* consists of up to three *moves*, followed by one *spawn*.
 
-A move can be either a *step*, a *capture*, or a *claim*.
+Each of the three moves can be either a *step*, a *capture*, or a *claim*.
 Each consists of moving a dot to an adjacent square.
 
 * Step: Move a dot to an empty adjacent square.
@@ -32,7 +32,7 @@ combining both dots into a fort.
 
 Note that forts cannot be captured.
 
-* Spawn: Place a new piece next to one of your forts.
+* Spawn: Place a new dot on an empty square next to one of your forts.
 
 The spawn is mandatory: If you prevent your opponent from spawning, you win the game.
 
