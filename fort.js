@@ -31,7 +31,7 @@ let board = [
         [0,0,0,0,0],
 ];
 
-const movesPerTurn = 3;
+const stepsPerTurn = 3;
 const midPoint = (board.length - 1)/2;
 
 let gameOver = false;
@@ -72,7 +72,7 @@ function movePiece(e) {
     const currentPiece = currentPlayer;
     const currentFort = currentPlayer * 2;
 
-    if (currentPhase <= movesPerTurn && kind == currentPiece) {
+    if (currentPhase <= stepsPerTurn && kind == currentPiece) {
         findPossiblePositions(p, false);
     } else if (kind == currentFort) {
         findPossiblePositions(p, true);
@@ -131,10 +131,10 @@ function enableToMove(p) {
 }
 
 function skipToSpawn() {
-    if (currentPhase === movesPerTurn + 1) {
+    if (currentPhase === stepsPerTurn + 1) {
         return;
     }
-    // If current player has no pieces that have legal moves, skip to the spawn phase.
+    // If current player has no pieces that have legal steps, skip to the spawn phase.
     for (let row_index = 0; row_index < board.length; row_index++) {
         const row = board[row_index];
         for (let col_index = 0; col_index < row.length; col_index++) {
@@ -152,11 +152,11 @@ function skipToSpawn() {
             }
         }
     }
-    currentPhase = movesPerTurn + 1;
+    currentPhase = stepsPerTurn + 1;
 }
 
 function checkGameOver() {
-    if (currentPhase <= movesPerTurn) {
+    if (currentPhase <= stepsPerTurn) {
         return;
     }
     // If, for every fort of the current player, it has no empty squares, the game is over.
@@ -195,8 +195,8 @@ function displayCurrentPlayer() {
     let playerDiv = document.getElementById("next-player-text");
     if (gameOver) {
         playerDiv.innerText = "wins! Game over!"
-    } else if (currentPhase <= movesPerTurn) {
-        playerDiv.innerText = "player, move " + currentPhase + "/" + movesPerTurn;
+    } else if (currentPhase <= stepsPerTurn) {
+        playerDiv.innerText = "player, step " + currentPhase + "/" + stepsPerTurn;
     } else {
         playerDiv.innerText = "player, spawn";
     }
