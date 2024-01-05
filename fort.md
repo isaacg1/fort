@@ -30,6 +30,7 @@ A step can be either a *walk*, a *capture*, or a *claim*.
 removing the enemy dot from the game.
 * Claim: Move a dot to an adjacent square occupied by another dot that you control,
 combining both dots into a fort.
+Additionally, remove all enemy dots that neighbor the new fort from the game.
 
 Note that forts cannot be captured.
 

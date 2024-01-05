@@ -55,9 +55,6 @@ let readyToMove = null;
 let undoStack = [];
 
 /* TODO's:
- * Undo stack
- * Explicit pass
- *
  * Long term:
  * - Count repetition
  * - Row and column markers
@@ -112,12 +109,22 @@ function enableToMove(p) {
 
         const kindToMove = board[readyToMove.row][readyToMove.col];
         const currentPiece = currentPlayer;
+        const opponentPiece = -currentPlayer;
         const currentFort = currentPlayer * 2;
         const targetKind = board[p.row][p.col];
         if (kindToMove === currentPiece) {
             if (targetKind === currentPiece) {
                 // Claim
                 board[p.row][p.col] = currentFort;
+                // Capture all neighboring enemies
+                const neighbors = allNeighbors(p);
+                for (let i = 0; i < neighbors.length; i++) {
+                    const neighbor = neighbors[i];
+                    const neighbor_cell = board[neighbor.row][neighbor.col];
+                    if (neighbor_cell == opponentPiece) {
+                        board[neighbor.row][neighbor.col] = 0;
+                    }
+                }
             } else {
                 // Step or capture
                 board[p.row][p.col] = currentPiece;
@@ -291,6 +298,8 @@ function undo() {
 
 function pass() {
     currentPhase = stepsPerTurn + 1;
+    displayCurrentPlayer();
+    buildBoard();
 }
 
 let game = document.getElementById("game");
