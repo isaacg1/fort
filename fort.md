@@ -56,8 +56,8 @@ but the game can also be played out to the end to make sure.
 
 Occasionally, players might get into a cycle where each is playing a move
 that undoes the opponent's move.
-Fort uses the
-[Arimaa repetition rule](https://en.wikibooks.org/wiki/Arimaa/Glossary#Repetition_rule):
-A player who has already completed their turn in a given position twice
-may never end their turn in that exact position again.
-The player must diverge and play a different move instead.
+I'm not quite sure what to do about that. 
+
+I think the best way to handle it is to declare:
+If player A does something and player B undoes it, player A has to do something else.
+I don't know how to operationalize this rule.

@@ -14,6 +14,14 @@ class Piece {
     }
 }
 
+class OldState {
+    constructor(oldPlayer, oldPhase, oldBoard) {
+        this.oldPlayer = oldPlayer;
+        this.oldPhase = oldPhase;
+        this.oldBoard = oldBoard;
+    }
+}
+
 // -2 = Black fort
 // -1 = Black piece
 // 0 = empty
@@ -44,11 +52,12 @@ let newPiecesPositions = [];
 
 let readyToMove = null;
 
-let oldPlayer = currentPlayer;
-let oldPhase = currentPhase;
-let oldBoard = board;
+let undoStack = [];
 
 /* TODO's:
+ * Undo stack
+ * Explicit pass
+ *
  * Long term:
  * - Count repetition
  * - Row and column markers
@@ -74,7 +83,7 @@ function movePiece(e) {
 
     if (currentPhase <= stepsPerTurn && kind == currentPiece) {
         findPossiblePositions(p, false);
-    } else if (kind == currentFort) {
+    } else if (currentPhase > stepsPerTurn && kind == currentFort) {
         findPossiblePositions(p, true);
     }
 }
@@ -94,10 +103,12 @@ function enableToMove(p) {
     }
     if (eligibleCell) {
         // Save old game state
-        oldPlayer = currentPlayer;
-        oldPhase = currentPhase;
+        const oldPlayer = currentPlayer;
+        const oldPhase = currentPhase;
         // Clone, two levels deep.
-        oldBoard = board.map(row => {return [...row]});
+        const oldBoard = board.map(row => {return [...row]});
+        const undoState = new OldState(oldPlayer, oldPhase, oldBoard);
+        undoStack.push(undoState);
 
         const kindToMove = board[readyToMove.row][readyToMove.col];
         const currentPiece = currentPlayer;
@@ -265,16 +276,21 @@ function markPossiblePosition(p) {
 }
 
 function undo() {
-    currentPlayer = oldPlayer;
-    currentPhase = oldPhase;
-    console.log(board);
-    board = oldBoard;
-    console.log(board);
-    gameOver = false;
-    readyToMove = null;
-    newPiecesPositions = [];
-    displayCurrentPlayer();
-    buildBoard();
+    const undoState = undoStack.pop();
+    if (undoState) {
+        currentPlayer = undoState.oldPlayer;
+        currentPhase = undoState.oldPhase;
+        board = undoState.oldBoard;
+        gameOver = false;
+        readyToMove = null;
+        newPiecesPositions = [];
+        displayCurrentPlayer();
+        buildBoard();
+    }
+}
+
+function pass() {
+    currentPhase = stepsPerTurn + 1;
 }
 
 let game = document.getElementById("game");
