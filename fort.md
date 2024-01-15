@@ -20,9 +20,11 @@ There are two players who alternate turns (also known as moves).
 
 There are two kinds of units: *dots* and *forts*. Dots can move, forts cannot.
 
-A *turn* (or a *move*) consists of up to three *steps*, followed by one *spawn*.
+A *turn* (or a *move*) consists of a number of *steps*, followed by a number of *spawns*.
+Intitally, there are three steps per turn, and one spawn per turn.
+As a player gains more forts, the player gains additional steps and spawns.
 
-Each of the three steps consists of moving a dot to an adjacent square.
+Each steps consists of moving a dot to an adjacent square.
 A step can be either a *walk*, a *capture*, or a *claim*.
 
 * Walk: Move a dot to an empty adjacent square.
@@ -36,7 +38,15 @@ Note that forts cannot be captured.
 
 * Spawn: Place a new dot on an empty square next to one of your forts.
 
-The spawn is mandatory: If you prevent your opponent from spawning, you win the game.
+Each spawn is mandatory: If you prevent your opponent from spawning, you win the game.
+
+Each even-numbered fort unlocks a new spawn, while each odd numbered fort unlocks a new step. So the progression goes:
+
+> 1 fort:  3 steps, 1 spawn.<br>
+> 2 forts: 3 steps, 2 spawns.<br>
+> 3 forts: 4 steps, 2 spawns.<br>
+> 4 forts: 4 steps, 3 spawns.<br>
+> 5 forts: 5 steps, 3 spawns.<br>
 
 ### Starting the game
 
